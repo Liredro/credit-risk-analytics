@@ -38,13 +38,3 @@ The aim is to apply SQL and Python to practical financial analysis, combining te
 - Credit limits, payment histories and repayment information
 - Historical default outcomes
 
-## 📈 Project Progress
-
-- [x] Initialise GitHub repository
-- [x] Define project objectives
-- [ ] Import and explore dataset
-- [ ] Perform SQL analysis
-- [ ] Develop Python visualisations
-- [ ] Document findings and conclusions
-
----
