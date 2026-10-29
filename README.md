@@ -1,90 +1,128 @@
 # Credit Portfolio & Risk Intelligence
 
-**A finance × data × code portfolio project.** A standalone dark-mode interactive website alongside a reproducible Python/SQL analysis pipeline for the historical *Default of Credit Card Clients* dataset.
+**An interactive credit-risk dashboard and reproducible Python/SQL analysis of historical credit-card data.**
 
-## Open the finished website
+This project explores how repayment behaviour, credit limits and client characteristics relate to observed payment defaults. It combines financial analysis, data validation and visualisation in a browser-based dashboard, supported by a Python and SQLite workflow.
 
-Open [`index.html`](index.html) in a modern browser. It requires no build tools, logins, external fonts, chart libraries, or servers. It displays independently published source-backed metrics immediately, including **30,000 clients**, **6,636 defaults (22.12%)**, mean credit limits and six months of statement/payment means. The default-rate stress slider works offline. You can also use **Load CSV** in the Data Explorer to calculate repayment, credit-limit and age breakdowns instantly using an official UCI CSV file. The file remains inside the user's browser.
+The analysis uses the [UCI *Default of Credit Card Clients* dataset](https://doi.org/10.24432/C55S3H), which contains **30,000 client records** and **6,636 next-month defaults** — an observed default rate of **22.12%**.
 
-**Important provenance distinction:** `index.html` is a *published-statistics snapshot*, not a claim that the complete raw dataset was executed in this environment. Published aggregates are shown for the full 30k sample; loading a subset updates outcome KPIs, but historical chart values and quartiles remain full-sample source statistics (as labelled). No subgroup statistics have been fabricated. The full pipeline can create a client-record-backed HTML page with all subgroup analyses included.
+> **Project scope:** This is an exploratory portfolio project using historical data, not a live banking system, predictive credit model or tool for making lending decisions.
 
-## Generate the full analysis & self-contained dashboard
+## Explore the dashboard
 
-The dataset is public, but its raw file is **not bundled** in this project. If you have `UCI_Credit_Card.csv`, put it inside `data/` and run:
+**To view the website**, download or clone the repository and open `index.html` in your browser. The static site works without a server, account or Python installation. You can also publish it through GitHub Pages (instructions below).
+
+The dashboard includes:
+
+- **Portfolio overview:** headline client, default-rate and credit-limit statistics.
+- **Repayment and payment patterns:** visualisations of historical repayment, billing and payment data.
+- **Data Explorer:** load a compatible UCI CSV file to calculate client-level segment breakdowns in your browser.
+- **Scenario analysis:** adjust a hypothetical default-rate multiplier to explore how the portfolio-level default count would change.
+
+**How to interpret the website:** Before a CSV is loaded, the static dashboard presents independently published full-sample statistics. When you load data, the relevant outcome metrics and segment analyses are recalculated from those records. Historical monthly charts and published distribution statistics remain reference figures and are labelled accordingly. Uploaded files are processed locally in the browser.
+
+## What this project demonstrates
+
+| Area | Implementation |
+| --- | --- |
+| Financial analysis | Default incidence, repayment behaviour, portfolio segmentation and scenario interpretation |
+| Python | Data ingestion, validation, analytical calculations and report generation |
+| SQL / SQLite | Structured client-level data and reproducible aggregation queries |
+| Front-end development | Interactive HTML, CSS and JavaScript dashboard |
+| Data communication | Charts, summary statistics, documented assumptions and reproducible outputs |
+
+## Run the full analysis locally
+
+The raw UCI dataset is **not included** in this repository. The Python pipeline can download it or analyse a copy you provide.
+
+**1. Set up the environment** (Python 3 required):
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
+```
+
+On Windows, activate the virtual environment with `.venv\Scripts\activate` instead.
+
+**2. Run the analysis**, using either option:
+
+```bash
+# Option A: Download the UCI source (internet connection required)
+python scripts/analyse.py --download
+
+# Option B: Use a local dataset placed in data/
 python scripts/analyse.py --csv data/UCI_Credit_Card.csv
 ```
 
-Or fetch the official UCI source directly (requires an internet connection):
+**3. Open the generated dashboard:** `outputs/dashboard_full.html`.
 
-```bash
-python scripts/analyse.py --download
+Unlike the static landing page, this generated HTML dashboard embeds the processed dataset for local, interactive segment exploration. No separate backend is needed to view it.
+
+### Generated outputs
+
+| File | Contents |
+| --- | --- |
+| `outputs/dashboard_full.html` | Standalone interactive dashboard generated from imported records |
+| `outputs/ANALYSIS_REPORT.md` | Results summary and segmented risk analysis |
+| `outputs/analysis_results.json` | Calculated metrics and data-quality checks |
+| `outputs/default_by_repayment.png` | Default-rate visualisation by repayment category |
+| `outputs/billing_and_payments.png` | Billing and payment visualisation |
+| `data/credit_risk.sqlite` | SQLite database for client-level analysis |
+| `data/credit_clients_clean.csv` | Validated and cleaned dataset |
+
+## Project structure
+
+The commands above assume the following repository organisation:
+
+```text
+.
+├── index.html                 # Interactive static website
+├── README.md                  # Project documentation
+├── requirements.txt           # Python dependencies
+├── scripts/
+│   └── analyse.py             # Data pipeline and report generation
+├── sql/
+│   └── 01_portfolio_analysis.sql
+├── tests/                     # Python and browser-logic tests
+│   ├── test_analysis.py
+│   └── test_dashboard.cjs
+├── data/                      # Local input and generated data
+└── outputs/                   # Generated reports, charts and dashboard
 ```
 
-Open **`outputs/dashboard_full.html`** — the entire analytical dataset is embedded locally, allowing immediate interactive segment exploration without downloading records or uploading a CSV to the browser. Further outputs:
+The SQL analysis file contains queries to reproduce portfolio checks and aggregations from the processed data.
 
-- `outputs/ANALYSIS_REPORT.md` — computed executive results and segmented risk table.
-- `outputs/analysis_results.json` — machine-readable calculations & quality checks.
-- `outputs/default_by_repayment.png` & `outputs/billing_and_payments.png` — illustrative findings visualised from the actual imported dataset.
-- `data/credit_risk.sqlite` — client-level SQLite table with derived segment columns.
-- `data/credit_clients_clean.csv` — canonical cleaned file with original feature codes intact.
-- `sql/01_portfolio_analysis.sql` — fully reproducible SQL checks and aggregations.
-
-Run Python unit tests:
+### Tests
 
 ```bash
+# Python unit tests
 python -m unittest discover -s tests -v
-```
 
-## Methodology
-
-- Unit of analysis: one credit-card client. Outcome is the dataset's next-month payment-default flag (binary 0/1).
-- Observed default incidence: `sum(default_flag)/number_of_clients`.
-- Billing and payment figures: arithmetic mean per client per month; **not** a realised default-loss timeline.
-- September repayment codes `-2`, `-1`, `0`, `1`, and `2+` are kept separate. `-2` and `0` occur in the real data but are undocumented by UCI's original dictionary. We do not arbitrarily relabel them as delinquency or non-use.
-- Client credit limit is **not** drawn balance, EAD or expected credit loss.
-- Scenario lab: a hypothetical relative multiplier applied to observed default incidence, not a trained stress model.
-- Demographic group breakdowns are descriptive and require fairness review; no individual client credit decisions are advocated.
-- Data are from 2005 and are not representative of a current lending portfolio.
-
-## Sources & licence
-
-- Yeh, I. (2009). *Default of Credit Card Clients*, UCI Machine Learning Repository: https://doi.org/10.24432/C55S3H — **CC BY 4.0**. The portfolio makes transformations and analytic summaries of the dataset.
-- Source-based outcome totals: https://pyml-datasets.readthedocs.io/en/latest/datasets/credit_card_default.html (30,000 observations, 6,636 default flags).
-- Published source statistics (percentiles, six-month bill and payment means): https://www.mdpi.com/1911-8074/19/9/674 (Table 3).
-
-No live connection to a bank, regulated credit decisioning, or predictive model is claimed.
-
-## Repository layout and publishing
-
-Keep `index.html`, `README.md` and `requirements.txt` in the repository root.
-Put `analyse.py` in `scripts/`, the SQL file in `sql/`, and tests in `tests/`.
-Use these exact names without download suffixes such as `(1)`.
-For GitHub Pages, publish the `main` branch and `/ (root)` folder.
-The static page runs without Python. Run the Python pipeline separately to
-produce reports, plots, SQLite data and `outputs/dashboard_full.html`.
-
-## Input validation
-
-The browser rejects missing or non-finite analytical values, invalid binary
-flags, fractional ages/repayment codes, malformed CSV rows and duplicate IDs
-when an ID column is supplied. Without IDs, client duplication cannot be
-reliably checked and the importer displays that limitation.
-Python also rejects empty inputs, missing IDs in an existing ID column,
-non-finite values and ambiguous column aliases. If the ID column is absent,
-it generates sequential row IDs; these do not prove client uniqueness.
-
-Imported records update outcome metrics, segment breakdowns, stress results,
-the displayed population size and the default-rate insight. Monthly charts
-and credit-limit distribution figures remain explicitly labelled published
-reference statistics, including in the generated dashboard.
-
-Run browser-logic regression checks with Node.js (no packages required):
-
-```bash
+# Browser-logic tests (requires Node.js; no extra packages)
 node tests/test_dashboard.cjs
 ```
+
+## Analytical approach and limitations
+
+- **Outcome:** The target is the recorded next-month default-payment flag (`0` or `1`), and the observed default rate is the number of flagged clients divided by the number of analysed clients.
+- **Segmentation:** Group-level default rates describe associations in this historical sample; they do not establish causality or individual creditworthiness.
+- **Repayment codes:** Codes `-2`, `-1`, `0`, `1` and `2+` are preserved separately rather than assigning unsupported meanings to undocumented codes.
+- **Credit limits:** A credit limit is not an outstanding exposure, exposure at default or expected credit loss.
+- **Scenario tool:** The multiplier is a simple sensitivity exercise, **not** a statistically estimated stress scenario or forecast.
+- **Data quality:** The import workflows check key field values and data formats. Duplicate-client detection depends on the availability of actual client IDs; generated row IDs do not establish uniqueness.
+- **Historical context:** The underlying records date from 2005. Results should not be treated as representative of today's credit portfolios.
+
+Demographic breakdowns, where included, are descriptive and should be interpreted with attention to fairness and potential bias.
+
+## Data sources and attribution
+
+- **Original dataset:** Yeh, I. (2009), [*Default of Credit Card Clients*](https://doi.org/10.24432/C55S3H), UCI Machine Learning Repository. Dataset licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); this project contains transformations and analytical summaries.
+- **Published default totals:** [PyML dataset documentation](https://pyml-datasets.readthedocs.io/en/latest/datasets/credit_card_default.html).
+- **Published summary statistics:** [*Journal of Risk and Financial Management*, Table 3](https://www.mdpi.com/1911-8074/19/9/674).
+
+## Publishing the website
+
+To publish the static dashboard with GitHub Pages, keep `index.html` in the repository root and select **Settings → Pages → Deploy from a branch → `main` → `/ (root)`**. The live Pages URL will then be available in the repository's Pages settings.
+
+The static website is independent of the Python analysis. Generate the full reports and dashboard locally using the instructions above.
