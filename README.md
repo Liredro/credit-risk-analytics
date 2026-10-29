@@ -120,9 +120,3 @@ Demographic breakdowns, where included, are descriptive and should be interprete
 - **Original dataset:** Yeh, I. (2009), [*Default of Credit Card Clients*](https://doi.org/10.24432/C55S3H), UCI Machine Learning Repository. Dataset licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); this project contains transformations and analytical summaries.
 - **Published default totals:** [PyML dataset documentation](https://pyml-datasets.readthedocs.io/en/latest/datasets/credit_card_default.html).
 - **Published summary statistics:** [*Journal of Risk and Financial Management*, Table 3](https://www.mdpi.com/1911-8074/19/9/674).
-
-## Publishing the website
-
-To publish the static dashboard with GitHub Pages, keep `index.html` in the repository root and select **Settings → Pages → Deploy from a branch → `main` → `/ (root)`**. The live Pages URL will then be available in the repository's Pages settings.
-
-The static website is independent of the Python analysis. Generate the full reports and dashboard locally using the instructions above.
