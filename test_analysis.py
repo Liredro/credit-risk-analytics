@@ -39,4 +39,28 @@ class AnalysisTests(unittest.TestCase):
         df=self.fixture();df.loc[1,'default.payment.next.month']=2
         with self.assertRaises(ValueError): prepare(df)
 
+class ValidationTests(AnalysisTests):
+    def test_empty_input(self):
+        with self.assertRaises(ValueError): prepare(self.fixture().iloc[:0])
+
+    def test_missing_and_nonfinite_values(self):
+        for col in ['ID', 'LIMIT_BAL', 'AGE', 'PAY_0', 'default.payment.next.month']:
+            for bad in [None, float('inf'), float('-inf'), '']:
+                with self.subTest(column=col, value=bad):
+                    df=self.fixture().astype(object);df.loc[0,col]=bad
+                    with self.assertRaises(ValueError): prepare(df)
+
+    def test_fractional_codes(self):
+        for col in ['ID','AGE','PAY_0']:
+            df=self.fixture().astype(object);df.loc[0,col]=1.5
+            with self.assertRaises(ValueError): prepare(df)
+
+    def test_duplicate_alias(self):
+        df=self.fixture();df['X1']=df['LIMIT_BAL']
+        with self.assertRaises(ValueError): prepare(df)
+
+    def test_missing_id_column_generates_ids(self):
+        result=prepare(self.fixture().drop(columns='ID'))
+        self.assertEqual(result.ID.tolist(),[1,2,3,4])
+
 if __name__=='__main__': unittest.main()

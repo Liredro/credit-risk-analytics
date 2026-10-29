@@ -32,6 +32,8 @@ TARGET = 'default.payment.next.month'
 
 def prepare(df: pd.DataFrame) -> pd.DataFrame:
     """Normalise UCI CSV or ucimlrepo columns; preserve raw codes."""
+    if df.empty:
+        raise ValueError('The dataset has no data rows.')
     data = df.copy()
     data.columns = [str(k).strip().replace('default payment next month', TARGET) for k in data.columns]
     renames = {f'X{i}': name for i, name in enumerate(ORIGINAL_COLS, 1)}
@@ -39,6 +41,8 @@ def prepare(df: pd.DataFrame) -> pd.DataFrame:
                     'credit_limit_ntd': 'LIMIT_BAL', 'repayment_status_sep': 'PAY_0',
                     'age': 'AGE'})
     data = data.rename(columns=renames)
+    if data.columns.duplicated().any():
+        raise ValueError('Duplicate column names after normalisation.')
     required = ORIGINAL_COLS + [TARGET]
     missing = [k for k in required if k not in data.columns]
     if missing:
@@ -47,8 +51,16 @@ def prepare(df: pd.DataFrame) -> pd.DataFrame:
         data.insert(0, 'ID', range(1, len(data) + 1))
     for name in ['ID', *required]:
         data[name] = pd.to_numeric(data[name], errors='raise')
-    if data[required].isna().any().any():
+    if data[['ID', *required]].isna().any().any():
         raise ValueError('Missing values in required analytical fields.')
+    if not np.isfinite(data[['ID', *required]].to_numpy(dtype=float)).all():
+        raise ValueError('All analytical values and IDs must be finite.')
+    integer_fields = ['ID', 'SEX', 'EDUCATION', 'MARRIAGE', 'AGE',
+                      'PAY_0', 'PAY_2', 'PAY_3', 'PAY_4', 'PAY_5', 'PAY_6']
+    if (data[integer_fields] % 1 != 0).any().any():
+        raise ValueError('IDs, ages and categorical codes must be whole numbers.')
+    if (data.ID <= 0).any():
+        raise ValueError('Client identifiers must be positive.')
     if data.ID.duplicated().any():
         raise ValueError('Duplicate client identifiers.')
     if not data[TARGET].isin([0, 1]).all():
@@ -112,7 +124,7 @@ def segment_stats(df: pd.DataFrame, group: str) -> list[dict]:
 
 
 def analyse(df: pd.DataFrame) -> dict:
-    x = add_segments(df)
+    x = add_segments(prepare(df))
     n = len(x); defaults = int(x[TARGET].sum())
     monthly = []
     for month, no in [('Apr',6),('May',5),('Jun',4),('Jul',3),('Aug',2),('Sep',1)]:
@@ -190,7 +202,10 @@ def export_full_dashboard(df: pd.DataFrame) -> None:
     payload = json.dumps(rows,separators=(',',':')).replace('</','<\\/')
     html=(ROOT/'index.html').read_text(encoding='utf-8')
     tag=f'<script type="application/json" id="embedded-portfolio">{payload}</script>'
-    html=html.replace('<script>\n(function()',tag+'\n<script>\n(function()',1)
+    marker = '<script>\n(function()'
+    if marker not in html:
+        raise ValueError('Dashboard script marker missing; cannot embed data.')
+    html=html.replace(marker,tag+'\n'+marker,1)
     (OUT/'dashboard_full.html').write_text(html,encoding='utf-8')
 
 

@@ -58,3 +58,33 @@ python -m unittest discover -s tests -v
 - Published source statistics (percentiles, six-month bill and payment means): https://www.mdpi.com/1911-8074/19/9/674 (Table 3).
 
 No live connection to a bank, regulated credit decisioning, or predictive model is claimed.
+
+## Repository layout and publishing
+
+Keep `index.html`, `README.md` and `requirements.txt` in the repository root.
+Put `analyse.py` in `scripts/`, the SQL file in `sql/`, and tests in `tests/`.
+Use these exact names without download suffixes such as `(1)`.
+For GitHub Pages, publish the `main` branch and `/ (root)` folder.
+The static page runs without Python. Run the Python pipeline separately to
+produce reports, plots, SQLite data and `outputs/dashboard_full.html`.
+
+## Input validation
+
+The browser rejects missing or non-finite analytical values, invalid binary
+flags, fractional ages/repayment codes, malformed CSV rows and duplicate IDs
+when an ID column is supplied. Without IDs, client duplication cannot be
+reliably checked and the importer displays that limitation.
+Python also rejects empty inputs, missing IDs in an existing ID column,
+non-finite values and ambiguous column aliases. If the ID column is absent,
+it generates sequential row IDs; these do not prove client uniqueness.
+
+Imported records update outcome metrics, segment breakdowns, stress results,
+the displayed population size and the default-rate insight. Monthly charts
+and credit-limit distribution figures remain explicitly labelled published
+reference statistics, including in the generated dashboard.
+
+Run browser-logic regression checks with Node.js (no packages required):
+
+```bash
+node tests/test_dashboard.cjs
+```
