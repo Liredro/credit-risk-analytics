@@ -1,41 +1,63 @@
-# Credit Portfolio & Risk Intelligence
+# 🛡️ Credit Risk Intelligence
 
-**An interactive credit-risk dashboard and reproducible Python/SQL analysis of historical credit-card data.**
+### Credit Portfolio & Risk Intelligence
 
-This project explores how repayment behaviour, credit limits and client characteristics relate to observed payment defaults. It combines financial analysis, data validation and visualisation in a browser-based dashboard, supported by a Python and SQLite workflow.
+**📊 An interactive credit-risk dashboard and reproducible Python/SQL analysis of historical credit-card data.**
+
+This project explores how repayment behaviour, credit limits and client characteristics relate to observed payment defaults. It combines **financial analysis, data validation and visualisation** in a browser-based dashboard, supported by a Python and SQLite workflow.
 
 The analysis uses the [UCI *Default of Credit Card Clients* dataset](https://doi.org/10.24432/C55S3H), which contains **30,000 client records** and **6,636 next-month defaults** — an observed default rate of **22.12%**.
 
-> **Project scope:** This is an exploratory portfolio project using historical data, not a live banking system, predictive credit model or tool for making lending decisions.
+> 💡 **Project scope:** This is an exploratory portfolio project using historical data, not a live banking system, predictive credit model or tool for making lending decisions.
 
-## Explore the dashboard
+---
 
-**To view the website**, download or clone the repository and open `index.html` in your browser. The static site works without a server, account or Python installation. You can also publish it through GitHub Pages (instructions below).
+## 🌐 Explore the Dashboard
 
-The dashboard includes:
+**To view the website**, download or clone the repository and open `index.html` in your browser.
 
-- **Portfolio overview:** headline client, default-rate and credit-limit statistics.
-- **Repayment and payment patterns:** visualisations of historical repayment, billing and payment data.
-- **Data Explorer:** load a compatible UCI CSV file to calculate client-level segment breakdowns in your browser.
-- **Scenario analysis:** adjust a hypothetical default-rate multiplier to explore how the portfolio-level default count would change.
+The static site works without a server, account or Python installation. You can also publish it through GitHub Pages.
 
-**How to interpret the website:** Before a CSV is loaded, the static dashboard presents independently published full-sample statistics. When you load data, the relevant outcome metrics and segment analyses are recalculated from those records. Historical monthly charts and published distribution statistics remain reference figures and are labelled accordingly. Uploaded files are processed locally in the browser.
+### ✨ Dashboard Features
 
-## What this project demonstrates
+- **📊 Portfolio Overview:** Headline client statistics, default rates and credit-limit distributions.
+- **💳 Repayment & Payment Patterns:** Visualisations of historical repayment behaviour, billing amounts and payment activity.
+- **🔎 Data Explorer:** Load a compatible UCI CSV file to calculate client-level segment breakdowns directly in your browser.
+- **🎛️ Scenario Analysis:** Adjust a hypothetical default-rate multiplier to explore how the portfolio-level default count would change.
+
+### 🧭 Understanding the Dashboard
+
+Before a CSV is loaded, the static dashboard presents independently published full-sample statistics.
+
+When you load data, the relevant outcome metrics and segment analyses are recalculated from those records.
+
+Historical monthly charts and published distribution statistics remain reference figures and are labelled accordingly.
+
+🔒 **Privacy:** Uploaded files are processed locally in the browser.
+
+---
+
+## 🧠 What This Project Demonstrates
 
 | Area | Implementation |
 | --- | --- |
-| Financial analysis | Default incidence, repayment behaviour, portfolio segmentation and scenario interpretation |
-| Python | Data ingestion, validation, analytical calculations and report generation |
-| SQL / SQLite | Structured client-level data and reproducible aggregation queries |
-| Front-end development | Interactive HTML, CSS and JavaScript dashboard |
-| Data communication | Charts, summary statistics, documented assumptions and reproducible outputs |
+| 📈 Financial Analysis | Default incidence, repayment behaviour, portfolio segmentation and scenario interpretation |
+| 🐍 Python | Data ingestion, validation, analytical calculations and report generation |
+| 🗄️ SQL / SQLite | Structured client-level data and reproducible aggregation queries |
+| 💻 Front-End Development | Interactive HTML, CSS and JavaScript dashboard |
+| 📊 Data Communication | Charts, summary statistics, documented assumptions and reproducible outputs |
 
-## Run the full analysis locally
+---
 
-The raw UCI dataset is **not included** in this repository. The Python pipeline can download it or analyse a copy you provide.
+## ⚙️ Run the Full Analysis Locally
 
-**1. Set up the environment** (Python 3 required):
+The raw UCI dataset is **not included** in this repository.
+
+The Python pipeline can download it automatically or analyse a local copy you provide.
+
+### 1️⃣ Set Up the Environment
+
+**Requirements:** Python 3
 
 ```bash
 python3 -m venv .venv
@@ -43,25 +65,49 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 ```
 
-On Windows, activate the virtual environment with `.venv\Scripts\activate` instead.
-
-**2. Run the analysis**, using either option:
+On Windows, activate the virtual environment using:
 
 ```bash
-# Option A: Download the UCI source (internet connection required)
-python scripts/analyse.py --download
+.venv\Scripts\activate
+```
 
-# Option B: Use a local dataset placed in data/
+### 2️⃣ Run the Analysis
+
+Choose one of the following options.
+
+**Option A — Download the UCI dataset**
+
+*Internet connection required.*
+
+```bash
+python scripts/analyse.py --download
+```
+
+**Option B — Use a local dataset**
+
+Place your CSV file inside the `data/` directory.
+
+```bash
 python scripts/analyse.py --csv data/UCI_Credit_Card.csv
 ```
 
-**3. Open the generated dashboard:** `outputs/dashboard_full.html`.
+### 3️⃣ Open the Generated Dashboard
 
-Unlike the static landing page, this generated HTML dashboard embeds the processed dataset for local, interactive segment exploration. No separate backend is needed to view it.
+After running the analysis, open:
 
-### Generated outputs
+`outputs/dashboard_full.html`
 
-| File | Contents |
+Unlike the static landing page, this generated HTML dashboard embeds the processed dataset for local, interactive segment exploration.
+
+✅ No separate backend is needed to view the generated dashboard.
+
+---
+
+## 📁 Generated Outputs
+
+The analysis pipeline generates the following files:
+
+| File | Description |
 | --- | --- |
 | `outputs/dashboard_full.html` | Standalone interactive dashboard generated from imported records |
 | `outputs/ANALYSIS_REPORT.md` | Results summary and segmented risk analysis |
@@ -71,9 +117,11 @@ Unlike the static landing page, this generated HTML dashboard embeds the process
 | `data/credit_risk.sqlite` | SQLite database for client-level analysis |
 | `data/credit_clients_clean.csv` | Validated and cleaned dataset |
 
-## Project structure
+---
 
-The commands above assume the following repository organisation:
+## 🗂️ Project Structure
+
+The repository is organised as follows:
 
 ```text
 .
@@ -93,30 +141,68 @@ The commands above assume the following repository organisation:
 
 The SQL analysis file contains queries to reproduce portfolio checks and aggregations from the processed data.
 
-### Tests
+---
+
+## 🧪 Testing & Validation
+
+The project includes automated tests for both the Python analysis pipeline and JavaScript dashboard logic.
+
+**🐍 Python unit tests**
 
 ```bash
-# Python unit tests
 python -m unittest discover -s tests -v
+```
 
-# Browser-logic tests (requires Node.js; no extra packages)
+**💻 JavaScript browser-logic tests**
+
+Requires Node.js. No additional packages are needed.
+
+```bash
 node tests/test_dashboard.cjs
 ```
 
-## Analytical approach and limitations
+---
 
-- **Outcome:** The target is the recorded next-month default-payment flag (`0` or `1`), and the observed default rate is the number of flagged clients divided by the number of analysed clients.
-- **Segmentation:** Group-level default rates describe associations in this historical sample; they do not establish causality or individual creditworthiness.
-- **Repayment codes:** Codes `-2`, `-1`, `0`, `1` and `2+` are preserved separately rather than assigning unsupported meanings to undocumented codes.
-- **Credit limits:** A credit limit is not an outstanding exposure, exposure at default or expected credit loss.
-- **Scenario tool:** The multiplier is a simple sensitivity exercise, **not** a statistically estimated stress scenario or forecast.
-- **Data quality:** The import workflows check key field values and data formats. Duplicate-client detection depends on the availability of actual client IDs; generated row IDs do not establish uniqueness.
-- **Historical context:** The underlying records date from 2005. Results should not be treated as representative of today's credit portfolios.
+## 📐 Analytical Approach & Limitations
 
-Demographic breakdowns, where included, are descriptive and should be interpreted with attention to fairness and potential bias.
+The project follows a descriptive, evidence-based approach to credit portfolio analysis.
 
-## Data sources and attribution
+- **🎯 Default Definition:** The target is the recorded next-month default-payment flag (`0` or `1`). The observed default rate is calculated as the number of flagged clients divided by the number of analysed clients.
 
-- **Original dataset:** Yeh, I. (2009), [*Default of Credit Card Clients*](https://doi.org/10.24432/C55S3H), UCI Machine Learning Repository. Dataset licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); this project contains transformations and analytical summaries.
-- **Published default totals:** [PyML dataset documentation](https://pyml-datasets.readthedocs.io/en/latest/datasets/credit_card_default.html).
-- **Published summary statistics:** [*Journal of Risk and Financial Management*, Table 3](https://www.mdpi.com/1911-8074/19/9/674).
+- **📊 Portfolio Segmentation:** Group-level default rates describe associations within the historical sample. They do not establish causality or individual creditworthiness.
+
+- **💳 Repayment Status Codes:** Codes `-2`, `-1`, `0`, `1` and `2+` are preserved separately rather than assigning unsupported meanings to undocumented codes.
+
+- **💰 Credit Exposure:** A credit limit is not equivalent to outstanding exposure, exposure at default (EAD) or expected credit loss (ECL).
+
+- **🎛️ Scenario Analysis:** The default-rate multiplier is a simplified sensitivity exercise, **not** a statistically estimated stress scenario or predictive forecast.
+
+- **✅ Data Quality:** The import workflows validate key field values and data formats. Duplicate-client detection depends on the availability of actual client IDs; generated row IDs do not establish uniqueness.
+
+- **📅 Historical Context:** The underlying records date from 2005. Results should not be interpreted as representative of contemporary credit portfolios.
+
+> ⚠️ **Responsible interpretation:** Demographic breakdowns, where included, are descriptive and should be interpreted with attention to fairness, potential bias and the limitations of historical data.
+
+---
+
+## 📚 Data Sources & Attribution
+
+**📂 Original Dataset**
+
+Yeh, I. (2009). [*Default of Credit Card Clients*](https://doi.org/10.24432/C55S3H). UCI Machine Learning Repository.
+
+Dataset licensed under [Creative Commons Attribution 4.0 (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/). This project contains transformations and analytical summaries.
+
+**📊 Published Default Totals**
+
+[PyML Dataset Documentation — Credit Card Default](https://pyml-datasets.readthedocs.io/en/latest/datasets/credit_card_default.html)
+
+**📈 Published Summary Statistics**
+
+[*Journal of Risk and Financial Management* — Table 3](https://www.mdpi.com/1911-8074/19/9/674)
+
+---
+
+### 🛡️ Credit Risk Intelligence
+
+*Exploring historical credit risk through financial analysis, reproducible data workflows and interactive visualisation.*
