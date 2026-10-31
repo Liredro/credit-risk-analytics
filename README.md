@@ -202,7 +202,3 @@ Dataset licensed under [Creative Commons Attribution 4.0 (CC BY 4.0)](https://cr
 [*Journal of Risk and Financial Management* — Table 3](https://www.mdpi.com/1911-8074/19/9/674)
 
 ---
-
-### 🛡️ Credit Risk Intelligence
-
-*Exploring historical credit risk through financial analysis, reproducible data workflows and interactive visualisation.*
